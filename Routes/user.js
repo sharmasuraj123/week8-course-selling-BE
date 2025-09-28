@@ -1,11 +1,14 @@
-function createuserRouter(app) {
-  app.post("/user/signup", (req, res) => {});
+// const express = require('express')
+// const Router = express.Router;
 
-  app.post("/user/login", (req, res) => {});
+const { Router } = require("express");
+const userRouter = Router()
+userRouter.post("/signup", (req, res) => {});
 
-  app.get("/user/purchases", (req, res) => {});
-}
+userRouter.post("/login", (req, res) => {});
+
+userRouter.get("/purchases", (req, res) => {res.json({mess:"sexy boy."})});
 
 module.exports = {
-    createuserRouter:createuserRouter
-}
+  userRouter: userRouter,
+};
