@@ -4,7 +4,7 @@ const courseRouter = Router();
 courseRouter.get("/preview", (req, res) => {
   res.send("1");
 });
-courseRouter.post("/purchse", (req, res) => {
+courseRouter.post("/purchase", (req, res) => {
   res.send("1");
 });
 

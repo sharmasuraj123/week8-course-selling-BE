@@ -9,6 +9,7 @@ require("dotenv").config();
 const JWT_USER_SECRET = process.env.JWT_USER_SECRET;
 const { usermodel } = require("../db");
 const { signupSchema } = require("../zod");
+const { usermiddleware } = require("../middleware/user");
 
 userRouter.post("/signup", async (req, res) => {
   try {
@@ -72,7 +73,7 @@ userRouter.post("/login", async (req, res) => {
     });
   }
 });
-userRouter.get("/purchases", (req, res) => {
+userRouter.get("/purchases", usermiddleware, (req, res) => {
   res.json({ mess: "hello man!" });
 });
 

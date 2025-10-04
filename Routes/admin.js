@@ -1,12 +1,14 @@
 const { Router } = require("express");
 const bcrypt = require("bcrypt");
 adminRouter = Router();
-const jwt = require('jsonwebtoken')
+const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const JWT_ADMIN_SECRET = process.env.JWT_ADMIN_SECRET;
-const { adminmodel } = require("../db");
+const { adminmodel, coursemodel } = require("../db");
 const { signupSchema } = require("../zod");
 const { encodeAsync } = require("zod");
+const { adminmiddleware } = require("../middleware/admin");
+const admin = require("../middleware/admin");
 
 adminRouter.post("/signup", async (req, res) => {
   try {
@@ -49,7 +51,7 @@ adminRouter.post("/login", async (req, res) => {
     if (admin) {
       const decriptedpassword = await bcrypt.compare(password, admin.password);
       if (decriptedpassword) {
-        const token = jwt.sign({adminid:admin._id}, JWT_ADMIN_SECRET);
+        const token = jwt.sign({ adminid: admin._id }, JWT_ADMIN_SECRET);
         res.json({
           message: "you are logged in successfully ",
           token: token,
@@ -71,14 +73,73 @@ adminRouter.post("/login", async (req, res) => {
   }
 });
 
-adminRouter.post("/course", (req, res) => {
-  res.send("1");
+// web saas project in 6 hours on youtube to learn upload image file to the db.
+adminRouter.post("/course", adminmiddleware, async (req, res) => {
+  const adminId = req.adminid;
+  try {
+    const { title, description, price, imageUrl } = req.body;
+    const course = await coursemodel.create({
+      title: title,
+      description: description,
+      price: price,
+      imageUrl: imageUrl,
+      creatorid: adminId,
+    });
+    console.log(course);
+    res.json({
+      message: "course added successfully.",
+      courseid: course._id,
+    });
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
 });
-adminRouter.put("/course", (req, res) => {
-  res.send("1");
+
+adminRouter.put("/course", adminmiddleware, async (req, res) => {
+  const adminId = req.adminid;
+  const { title, description, price, imageUrl, courseid } = req.body;
+  try {
+    const course = await coursemodel.updateOne(
+      {
+        _id: courseid,
+        creatorid: adminId,
+      },
+      {
+        title: title,
+        description: description,
+        price: price,
+        imageUrl: imageUrl,
+        creatorid: adminId,
+      }
+    );
+    res.json({
+      message: "course is updated.",
+      courseid: course._id,
+    });
+  } catch (error) {
+    res.json({
+      error: error.message,
+    });
+  }
 });
-adminRouter.get("/course/bulk", (req, res) => {
-  res.send("1");
+
+adminRouter.get("/course/bulk", adminmiddleware, async (req, res) => {
+  const adminId = req.adminid;
+  try {
+    const courses = await coursemodel.find({
+      creatorid: adminId,
+    });
+    res.json({
+      message: "all the courses that was created by admin:",
+      courses: courses,
+    });
+  } catch (error) {
+    res.json({
+      error: error.message,
+    });
+  }
 });
 
 module.exports = {
