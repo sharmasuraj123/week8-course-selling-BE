@@ -24,7 +24,7 @@ const courseSchema = new Schema({
   creatorid: ObjectId,
 });
 
-const purchseSchema = new Schema({
+const purchaseSchema = new Schema({
   userId: ObjectId,
   courseId: ObjectId,
 });
@@ -32,7 +32,7 @@ const purchseSchema = new Schema({
 const usermodel = mongoose.model("users", userSchema);
 const adminmodel = mongoose.model("admins", adminSchema);
 const coursemodel = mongoose.model("courses", courseSchema);
-const purchasemodel = mongoose.model("purches", purchseSchema);
+const purchasemodel = mongoose.model("purchases", purchaseSchema);
 
 module.exports = {
   usermodel: usermodel,

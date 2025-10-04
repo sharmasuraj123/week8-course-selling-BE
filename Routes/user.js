@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const JWT_USER_SECRET = process.env.JWT_USER_SECRET;
-const { usermodel } = require("../db");
+const { usermodel, purchasemodel, coursemodel } = require("../db");
 const { signupSchema } = require("../zod");
 const { usermiddleware } = require("../middleware/user");
 
@@ -73,8 +73,30 @@ userRouter.post("/login", async (req, res) => {
     });
   }
 });
-userRouter.get("/purchases", usermiddleware, (req, res) => {
-  res.json({ mess: "hello man!" });
+
+// To find all the courses
+userRouter.get("/purchases", usermiddleware, async (req, res) => {
+  const userid = req.userid;
+  try {
+    const usercourses = await purchasemodel.find({
+      //  [{userid:"abc",courseid:""},{}]
+      userId: userid,
+    });
+    console.log(usercourses.map((x) => x.courseId));
+    const coursedata = await coursemodel.find({
+      _id: { $in: usercourses.map((x) => x.courseId) },
+    });
+    console.log(coursedata);
+    res.json({
+      message: "all coureses that was bought by the user",
+      courses: usercourses,
+      coursedata: coursedata,
+    });
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
 });
 
 module.exports = {
