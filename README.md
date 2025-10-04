@@ -9,3 +9,12 @@
  - Define the schema for User, Admin, Course, Purchase
  - Add middleware for user and admin authentication.
  - Complete the routes for user login, signup, purchase a course, see course(use express routing for better structure of your code.)
+
+
+
+
+ - GOOD TO HAVE:
+   1.cookie based authentication.
+   2.add a rate limiting middleware.
+   3.frontend in React
+   4.adding image file in db.
